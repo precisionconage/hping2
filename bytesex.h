@@ -7,9 +7,10 @@
 #ifndef ARS_BYTESEX_H
 #define ARS_BYTESEX_H
 
-#if 	defined(__i386__) \
+#if    defined(__i386__) \
 	|| defined(__alpha__) \
-	|| (defined(__mips__) && (defined(MIPSEL) || defined (__MIPSEL__)))
+	|| (defined(__mips__) && (defined(MIPSEL) || defined (__MIPSEL__))) \
+    || defined(__arm__)
 #define BYTE_ORDER_LITTLE_ENDIAN
 #elif 	defined(__mc68000__) \
 	|| defined (__sparc__) \

@@ -13,10 +13,13 @@ if [ "$1" = "--help" ]; then
 	exit 0
 fi
 
+if ![ -z $ANDROID_NDK ]; then
+    
+
 CC=${CC:=cc}
 
 echo build byteorder.c...
-$CC byteorder.c -o byteorder || exit 1
+$CC $CFLAGS byteorder.c -o byteorder || exit 1
 
 INSTALL_MANPATH=`echo $MANPATH|cut -f1 -d:`
 if [ "$INSTALL_MANPATH" = "" ]; then
@@ -30,9 +33,9 @@ cat > byteorder.h <<EOF
 #define __BYTEORDER_H
 
 EOF
-echo \#ifndef $BYTEORDER >> byteorder.h
-echo \#define $BYTEORDER >> byteorder.h
-echo \#endif /\* $BYTEORDER \*/ >> byteorder.h
+echo \#ifndef __LITTLE_ENDIAN_BITFIELD >> byteorder.h
+echo \#define __LITTLE_ENDIAN_BITFIELD >> byteorder.h
+echo \#endif /\* __LITTLE_ENDIAN_BITFIELD \*/ >> byteorder.h
 cat >> byteorder.h <<EOF
 
 #endif /* __BYTEORDER_H */
