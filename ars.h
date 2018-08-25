@@ -15,7 +15,7 @@
 #include <sys/socket.h>
 #include "systype.h"
 #include "in.h"
-#include "bytesex.h"
+#include "byteorder.h"
 
 #ifndef TRUE
 #define TRUE	1
@@ -170,14 +170,14 @@
 
 /* The IP header structure */
 struct ars_iphdr {
-#if defined(BYTE_ORDER_LITTLE_ENDIAN)
+#if defined(__LITTLE_ENDIAN__)
         __u8    ihl:4,
                 version:4;
-#elif defined (BYTE_ORDER_BIG_ENDIAN)
+#elif defined (__BIG_ENDIAN__)
         __u8    version:4,
                 ihl:4;
 #else
-#error  "Please, edit Makefile and add -DBYTE_ORDER_(BIG|LITTLE)_ENDIAN"
+#error  "Please, edit Makefile and add -D__(BIG|LITTLE)_ENDIAN__"
 #endif
         __u8    tos;
         __u16   tot_len;
@@ -234,14 +234,14 @@ struct ars_tcphdr {
 	__u16	th_dport;               /* destination port */
 	__u32	th_seq;                 /* sequence number */
 	__u32	th_ack;                 /* acknowledgement number */
-#if defined (BYTE_ORDER_LITTLE_ENDIAN)
+#if defined (__LITTLE_ENDIAN__)
 	__u8    th_x2:4,                /* (unused) */
 		th_off:4;               /* data offset */
-#elif defined (BYTE_ORDER_BIG_ENDIAN)
+#elif defined (__BIG_ENDIAN__)
 	__u8    th_off:4,               /* data offset */
 		th_x2:4;                /* (unused) */
 #else
-#error  "Please, edit Makefile and add -DBYTE_ORDER_(BIG|LITTLE)_ENDIAN"
+#error  "Please, edit Makefile and add -D__(BIG|LITTLE)_ENDIAN__"
 #endif
 	__u8    th_flags;
 	__u16   th_win;                 /* window */
