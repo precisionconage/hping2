@@ -7,7 +7,7 @@
 /* When available, these headers can improve platform endianness detection */
 #if defined(__linux__) && !defined(__ANDROID__)
 #    include <endian.h> // gnu libc normally provides, linux
-#elif defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__ANDROID__)
+#elif defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__)
 #    include <machine/endian.h>
 #elif defined (__NetBSD__)
 #    include <machine/endian_machdep.h>
@@ -15,6 +15,8 @@
 #    include <sys/param.h>
 #elif defined(__sun) // solaris
 #    include <sys/isa_defs.h>
+#elif defined(__ANDROID__)
+#    include <sys/endian.h>
 #endif
 
 #if !defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)

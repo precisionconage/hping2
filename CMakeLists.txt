@@ -15,15 +15,21 @@ if (CONFIG_OS_TYPE STREQUAL "BSD/OS")
 endif()
 
 if (CONFIG_OS_TYPE STREQUAL "SUNOS")
-    set(SOLARIS_LIBS socket resolv nsl)
+  set(SOLARIS_LIBS socket resolv nsl)
 
-    # TODO: This is used in sendtcp.c and sendudp.c, but it's never actually added to a header file or set anywhere accesible to code
-    set(SOLARIS_BUG "/* #define STUPID_SOLARIS_CHECKSUM_BUG */")
-    string(REGEX MATCH "2\.0*|5\.0*|2\.1*|5\.1*|2\.2*|5\.2*|2\.3*|5\.3*|2\.4*|5\.4*|5\.5\.1" VERSION_MATCH CMAKE_SYSTEM_VERSION)
-    if (VERSION_MATCH)
-      set(SOLARIS_BUG "#define STUPID_SOLARIS_CHECKSUM_BUG")
-    endif()
+  # TODO: This is used in sendtcp.c and sendudp.c, but it's never actually added to a header file or set anywhere accesible to code
+  set(SOLARIS_BUG "/* #define STUPID_SOLARIS_CHECKSUM_BUG */")
+  string(REGEX MATCH "2\.0*|5\.0*|2\.1*|5\.1*|2\.2*|5\.2*|2\.3*|5\.3*|2\.4*|5\.4*|5\.5\.1" VERSION_MATCH CMAKE_SYSTEM_VERSION)
+  if (VERSION_MATCH)
+    set(SOLARIS_BUG "#define STUPID_SOLARIS_CHECKSUM_BUG")
+  endif()
+endif()
 
+# TODO: Probably don't need to change this since we can check if ANDROID is defined in code instead, but should check if CONFIG_OS_TYPE being
+# Linux enables any Android-incompatible code
+cmake_policy(SET CMP0054 NEW)
+if (CONFIG_OS_TYPE STREQUAL "ANDROID")
+  set(CONFIG_OS_TYPE "LINUX")
 endif()
 
 # Create a systype header file specifying the OS so that code can use it
@@ -90,11 +96,17 @@ set(ARS_SOURCES apd.c
                 ars.c
                 split.c)
 
+# TEMPORARY UNTIL CUTILS IS MOVED OUT
+link_directories(${PROJECT_SOURCE_DIR})
+
 add_library(ars STATIC ${ARS_SOURCES})
 add_executable(hping2 ${HPING2_SOURCES})
 target_include_directories(hping2 PRIVATE ${PROJECT_BINARY_DIR})
 target_include_directories(ars PRIVATE ${PROJECT_BINARY_DIR})
 target_link_libraries(hping2 ars ${PCAP_LIBRARY} ${SOLARIS_LIBS})
+
+# TEMPORARY UNTIL CUTILS IS MOVED OUT
+target_link_libraries(hping2 cutils)
 
 # libpcap peculiarities
 if (PCAP_FOUND)
