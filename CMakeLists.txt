@@ -46,25 +46,32 @@ endif()
 
 ################## Library/executable setup ##################
 
+# Android has a different shared memory implementation
+if (ANDROID)
+  set(SHM_SOURCE "shm_android.c")
+else()
+  set(SHM_SOURCE "shm_posix.c")
+endif()
+
 set(HPING2_SOURCES antigetopt.c
                    arsglue.c
                    binding.c
                    cksum.c
                    datafiller.c
-	                 datahandler.c
-	                 display_ipopt.c
+                   datahandler.c
+                   display_ipopt.c
                    gethostname.c
                    getifname.c
                    getlhs.c
                    getusec.c
-	                 hstring.c
+                   hstring.c
                    ip_opt_build.c
-	                 libpcap_stuff.c
-	                 linux_sockpacket.c
+                   libpcap_stuff.c
+                   linux_sockpacket.c
                    listen.c
-	                 logicmp.c
+                   logicmp.c
                    main.c
-	                 memlock.c
+                   memlock.c
                    memlockall.c
                    memstr.c
                    memunlock.c
@@ -72,7 +79,7 @@ set(HPING2_SOURCES antigetopt.c
                    opensockraw.c
                    parseoptions.c
                    random.c
-	                 relid.c
+                   relid.c
                    resolve.c
                    rtt.c
                    scan.c
@@ -85,6 +92,7 @@ set(HPING2_SOURCES antigetopt.c
                    sendtcp.c
                    sendudp.c
                    signal.c
+                   ${SHM_SOURCE}
                    sockopt.c
                    statistics.c
                    strlcpy.c
@@ -97,7 +105,9 @@ set(ARS_SOURCES apd.c
                 split.c)
 
 # TEMPORARY UNTIL CUTILS IS MOVED OUT
-link_directories(${PROJECT_SOURCE_DIR})
+if (ANDROID)
+  link_directories(${PROJECT_SOURCE_DIR})
+endif()
 
 add_library(ars STATIC ${ARS_SOURCES})
 add_executable(hping2 ${HPING2_SOURCES})
@@ -106,7 +116,9 @@ target_include_directories(ars PRIVATE ${PROJECT_BINARY_DIR})
 target_link_libraries(hping2 ars ${PCAP_LIBRARY} ${SOLARIS_LIBS})
 
 # TEMPORARY UNTIL CUTILS IS MOVED OUT
-target_link_libraries(hping2 cutils)
+if (ANDROID)
+  target_link_libraries(hping2 cutils)
+endif()
 
 # libpcap peculiarities
 if (PCAP_FOUND)
